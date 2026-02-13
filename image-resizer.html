@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Image Resizer – SpeedTools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<!-- Favicon -->
+<link rel="icon" href="assets/favicon/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg">
+<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+<link rel="manifest" href="assets/favicon/site.webmanifest">
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Inter,system-ui;
+background:
+radial-gradient(circle at 20% 20%,#a7f3d0,transparent 40%),
+radial-gradient(circle at 80% 80%,#fde68a,transparent 45%),
+linear-gradient(135deg,#f8fafc,#ecfeff);
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#111;
+}
+
+/* HOME */
+.home-btn{
+position:fixed;top:18px;left:18px;
+text-decoration:none;font-size:14px;font-weight:600;
+padding:8px 14px;border-radius:999px;
+background:rgba(255,255,255,.9);
+backdrop-filter:blur(10px);
+color:#111;
+box-shadow:0 10px 26px rgba(0,0,0,.12);
+z-index:999;
+}
+
+/* CARD */
+.card{
+width:95%;max-width:1150px;
+background:#fff;
+padding:26px;
+border-radius:26px;
+box-shadow:0 28px 60px rgba(0,0,0,.15);
+}
+
+.header{
+display:flex;justify-content:space-between;align-items:center;
+margin-bottom:6px
+}
+.header h1{font-size:30px;margin:0}
+.badge{
+font-size:12px;
+background:linear-gradient(135deg,#22c55e,#4ade80);
+color:#052e16;
+padding:6px 12px;border-radius:999px
+}
+.subtitle{font-size:14px;color:#555;margin-bottom:14px}
+
+/* GRID */
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+}
+
+/* DROP */
+.drop{
+height:220px;
+border-radius:18px;
+border:2px dashed #22c55e;
+background:#f0fdf4;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+cursor:pointer;
+font-size:14px;color:#555;
+}
+.drop input{display:none}
+
+/* PREVIEWS */
+.preview{
+background:#fff;
+border-radius:18px;
+box-shadow:0 10px 26px rgba(0,0,0,.12);
+padding:10px;
+}
+.preview img{
+width:100%;
+height:220px;
+object-fit:contain;
+border-radius:14px;
+background:#f9fafb;
+}
+
+/* CONTROLS */
+.controls{
+background:#f9fafb;
+padding:16px;
+border-radius:18px;
+}
+.controls label{
+font-size:13px;color:#555;
+display:block;margin-bottom:6px
+}
+.controls input[type=number],
+.controls input[type=range]{
+width:100%;
+padding:10px;
+border-radius:12px;
+border:1px solid #ddd;
+margin-bottom:10px
+}
+.controls input[type=checkbox]{accent-color:#22c55e}
+
+.inline{
+display:flex;align-items:center;gap:8px;
+font-size:13px;margin-bottom:10px
+}
+
+/* BUTTONS */
+.actions{
+display:flex;
+gap:10px;
+margin:8px 0;
+flex-wrap:wrap;
+}
+button{
+flex:1;
+padding:12px;
+border-radius:14px;
+border:none;
+font-size:13px;
+font-family:Inter;
+cursor:pointer;
+}
+.green{
+background:linear-gradient(135deg,#22c55e,#4ade80);
+color:#052e16;
+box-shadow:0 10px 30px rgba(34,197,94,.4)
+}
+.gray{background:#e5e7eb}
+
+/* STATS */
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;margin-top:10px
+}
+.stat{
+background:linear-gradient(135deg,#f0fdf4,#ecfeff);
+padding:12px;border-radius:14px;
+text-align:center;font-size:13px
+}
+.stat strong{display:block;font-size:18px}
+
+/* MOBILE */
+@media(max-width:900px){
+.grid{grid-template-columns:1fr}
+.preview img,.drop{height:180px}
+}
+</style>
+</head>
+
+<body>
+
+<a href="index.html" class="home-btn">← Home</a>
+
+<div class="card">
+
+<div class="header">
+<h1>Image Resizer</h1>
+<div class="badge">Preview Ready</div>
+</div>
+<p class="subtitle">Resize images and preview before downloading.</p>
+
+<div class="grid">
+
+<!-- LEFT -->
+<label class="drop" id="drop">
+<input type="file" id="file" accept="image/*">
+Upload image<br>or drag & drop
+</label>
+
+<!-- RIGHT -->
+<div class="controls">
+
+<label>Resize by Percentage</label>
+<input type="range" id="scale" min="10" max="200" value="100">
+<div style="font-size:13px;margin-bottom:10px">
+Scale: <strong><span id="scaleVal">100</span>%</strong>
+</div>
+
+<div class="actions">
+<button class="gray" onclick="applyScale(25)">25%</button>
+<button class="gray" onclick="applyScale(50)">50%</button>
+<button class="gray" onclick="applyScale(75)">75%</button>
+<button class="gray" onclick="applyScale(100)">100%</button>
+</div>
+
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:14px 0">
+
+<label>Width (px)</label>
+<input type="number" id="width">
+
+<label>Height (px)</label>
+<input type="number" id="height">
+
+<label class="inline">
+<input type="checkbox" id="ratio" checked> Maintain aspect ratio
+</label>
+
+<label>Quick Presets</label>
+<div class="actions">
+<button class="gray" onclick="preset(1080,1080)">IG Post</button>
+<button class="gray" onclick="preset(1080,1920)">IG Story</button>
+<button class="gray" onclick="preset(500,500)">WhatsApp DP</button>
+<button class="gray" onclick="preset(800,600)">Web</button>
+</div>
+
+<div class="actions">
+<button class="green" id="resize" disabled>Resize</button>
+<button class="gray" id="download" disabled>Download</button>
+</div>
+
+<div class="stats">
+<div class="stat"><strong id="orig">—</strong>Original</div>
+<div class="stat"><strong id="new">—</strong>Resized</div>
+<div class="stat"><strong id="ratioText">—</strong>Ratio</div>
+</div>
+
+</div>
+
+</div>
+
+<!-- OUTPUT PREVIEW -->
+<div class="grid" style="margin-top:18px">
+<div class="preview">
+<strong>Original</strong>
+<img id="origPreview">
+</div>
+<div class="preview">
+<strong>Resized</strong>
+<img id="resizedPreview">
+</div>
+</div>
+
+</div>
+
+<script>
+const fileInput=document.getElementById("file");
+const drop=document.getElementById("drop");
+
+const origPreview=document.getElementById("origPreview");
+const resizedPreview=document.getElementById("resizedPreview");
+
+const widthInput=document.getElementById("width");
+const heightInput=document.getElementById("height");
+const ratioCheck=document.getElementById("ratio");
+
+const resizeBtn=document.getElementById("resize");
+const downloadBtn=document.getElementById("download");
+
+const scale=document.getElementById("scale");
+const scaleVal=document.getElementById("scaleVal");
+
+const origEl=document.getElementById("orig");
+const newEl=document.getElementById("new");
+const ratioEl=document.getElementById("ratioText");
+
+let img=new Image();
+let origW=0,origH=0;
+let resizedBlob=null;
+
+fileInput.addEventListener("change",handleFile);
+
+function handleFile(){
+const f=fileInput.files[0];
+if(!f) return;
+origPreview.src=URL.createObjectURL(f);
+
+img.onload=()=>{
+origW=img.width;
+origH=img.height;
+widthInput.value=origW;
+heightInput.value=origH;
+origEl.textContent=origW+"×"+origH;
+ratioEl.textContent=(origW/origH).toFixed(2);
+resizeBtn.disabled=false;
+};
+img.src=origPreview.src;
+}
+
+widthInput.addEventListener("input",()=>{
+if(ratioCheck.checked && origW){
+heightInput.value=Math.round(widthInput.value*(origH/origW));
+}
+});
+heightInput.addEventListener("input",()=>{
+if(ratioCheck.checked && origH){
+widthInput.value=Math.round(heightInput.value*(origW/origH));
+}
+});
+
+scale.addEventListener("input",()=>{
+scaleVal.textContent=scale.value;
+applyScale(scale.value);
+});
+
+function applyScale(p){
+if(!origW) return;
+widthInput.value=Math.round(origW*p/100);
+heightInput.value=Math.round(origH*p/100);
+resizeBtn.disabled=false;
+}
+
+function preset(w,h){
+widthInput.value=w;
+heightInput.value=h;
+resizeBtn.disabled=false;
+}
+
+resizeBtn.addEventListener("click",()=>{
+const c=document.createElement("canvas");
+c.width=+widthInput.value;
+c.height=+heightInput.value;
+c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+c.toBlob(b=>{
+resizedBlob=b;
+resizedPreview.src=URL.createObjectURL(b);
+newEl.textContent=c.width+"×"+c.height;
+downloadBtn.disabled=false;
+},"image/jpeg",0.95);
+});
+
+downloadBtn.addEventListener("click",()=>{
+const a=document.createElement("a");
+a.href=URL.createObjectURL(resizedBlob);
+a.download="resized-image.jpg";
+a.click();
+});
+</script>
+
+</body>
+</html>

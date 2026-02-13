@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>QR Code Generator – SpeedTools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Generate QR codes instantly. Free, fast, privacy-first. Works on mobile, desktop & iOS.">
+
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Manrope,system-ui;
+background:
+radial-gradient(circle at 20% 20%,#bbf7d0,transparent 40%),
+radial-gradient(circle at 80% 80%,#bfdbfe,transparent 40%),
+linear-gradient(135deg,#fdf4ff,#ecfeff);
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#0f172a;
+}
+
+/* HOME */
+.home-btn{
+position:fixed;top:16px;left:16px;
+padding:8px 14px;border-radius:999px;
+background:#fff;
+text-decoration:none;color:#111;
+font-weight:800;font-size:13px;
+box-shadow:0 10px 26px rgba(0,0,0,.12);
+z-index:50;
+}
+
+/* CARD */
+.card{
+width:100%;
+max-width:1000px;
+background:#fff;
+border-radius:30px;
+padding:28px;
+box-shadow:0 30px 70px rgba(0,0,0,.18);
+}
+
+/* HEADER */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:12px;
+}
+.header h1{margin:0;font-size:28px}
+.badge{
+font-size:12px;
+padding:6px 12px;
+border-radius:999px;
+background:linear-gradient(135deg,#22c55e,#3b82f6);
+color:#fff;
+font-weight:800;
+}
+.sub{font-size:14px;color:#555;margin-bottom:18px}
+
+/* GRID */
+.main{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:22px;
+}
+
+/* CONTROLS */
+.controls{
+display:grid;
+gap:14px;
+}
+select,textarea,input{
+width:100%;
+padding:14px 16px;
+border-radius:16px;
+border:1px solid #ddd;
+font-size:14px;
+font-family:Manrope;
+outline:none;
+background:#f9fafb;
+}
+textarea{height:120px;resize:none}
+input[type=color]{padding:4px;height:48px}
+
+button{
+padding:14px;
+border-radius:16px;
+border:none;
+font-weight:800;
+font-size:14px;
+cursor:pointer;
+color:#fff;
+background:linear-gradient(135deg,#3b82f6,#22c55e);
+box-shadow:0 12px 30px rgba(59,130,246,.35);
+}
+button:active{transform:scale(.96)}
+
+/* PREVIEW */
+.preview{
+background:#f8fafc;
+border-radius:22px;
+padding:22px;
+text-align:center;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:14px;
+}
+#qr{
+width:240px;
+height:240px;
+display:grid;
+place-items:center;
+background:#fff;
+border-radius:16px;
+}
+.downloads{
+display:flex;
+gap:12px;
+}
+.downloads a{
+padding:10px 14px;
+border-radius:14px;
+background:#111;
+color:#fff;
+text-decoration:none;
+font-size:13px;
+font-weight:800;
+}
+
+/* FOOTER */
+.footer{
+margin-top:16px;
+text-align:center;
+font-size:12px;
+color:#666;
+}
+
+/* MOBILE */
+@media(max-width:800px){
+.main{grid-template-columns:1fr}
+#qr{width:220px;height:220px}
+}
+</style>
+</head>
+
+<body>
+
+<a href="index.html" class="home-btn">← Home</a>
+
+<div class="card">
+
+<div class="header">
+<h1>QR Code Generator</h1>
+<div class="badge">100% Private</div>
+</div>
+<p class="sub">Create QR codes instantly. No login. No tracking. Works everywhere.</p>
+
+<div class="main">
+
+<!-- LEFT -->
+<div class="controls">
+<select id="type">
+<option value="text">Text / URL</option>
+<option value="wifi">Wi-Fi</option>
+<option value="email">Email</option>
+<option value="phone">Phone</option>
+</select>
+
+<textarea id="data" placeholder="Enter text or URL..."></textarea>
+
+<input type="color" id="color" value="#000000">
+
+<button onclick="generate()">Generate QR</button>
+</div>
+
+<!-- RIGHT -->
+<div class="preview">
+<div id="qr"></div>
+<div class="downloads">
+<a id="png" download="qr.png">PNG</a>
+<a id="svg" download="qr.svg">SVG</a>
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+🔒 Runs locally in your browser • 📱 Mobile & iOS friendly
+</div>
+
+</div>
+
+<!-- QR LIB -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+
+<script>
+const qrBox = document.getElementById("qr");
+const png = document.getElementById("png");
+const svg = document.getElementById("svg");
+
+function generate(){
+  qrBox.innerHTML = "";
+  let type = document.getElementById("type").value;
+  let val = document.getElementById("data").value.trim();
+  let color = document.getElementById("color").value;
+
+  if(!val){ alert("Please enter data"); return; }
+
+  let data = val;
+  if(type==="wifi") data = `WIFI:T:WPA;S:${val};;`;
+  if(type==="email") data = `mailto:${val}`;
+  if(type==="phone") data = `tel:${val}`;
+
+  QRCode.toCanvas(document.createElement("canvas"), data, {
+    width:240,
+    color:{dark:color,light:"#ffffff"}
+  }, (err, canvas)=>{
+    if(err) return;
+    qrBox.appendChild(canvas);
+    png.href = canvas.toDataURL("image/png");
+  });
+
+  QRCode.toString(data,{type:"svg",color:{dark:color,light:"#ffffff"}},(e,s)=>{
+    svg.href = "data:image/svg+xml;utf8," + encodeURIComponent(s);
+  });
+}
+</script>
+
+</body>
+</html>

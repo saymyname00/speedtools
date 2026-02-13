@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About SpeedTools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="About SpeedTools – free, fast and privacy-first online tools built by an independent developer. No login, no tracking, browser-based.">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+
+<!-- Favicon -->
+<link rel="icon" href="assets/favicon/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg">
+<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+<link rel="manifest" href="assets/favicon/site.webmanifest">
+
+<style>
+:root{
+--bg1:#ecfeff;--bg2:#fdf4ff;--ink:#0f172a;--muted:#475569;
+--blue:#3b82f6;--green:#22c55e;--violet:#8b5cf6;--line:#e5e7eb;
+}
+*{box-sizing:border-box}
+body{
+margin:0;font-family:Manrope,system-ui;color:var(--ink);
+background:
+radial-gradient(circle at 20% 20%,#bbf7d0,transparent 40%),
+radial-gradient(circle at 80% 80%,#bfdbfe,transparent 40%),
+linear-gradient(135deg,var(--bg2),var(--bg1));
+}
+
+/* HEADER */
+.header{
+position:sticky;top:0;z-index:50;
+background:rgba(255,255,255,.9);
+backdrop-filter:blur(10px);
+border-bottom:1px solid var(--line)
+}
+.header-inner{
+max-width:1100px;margin:auto;padding:14px 18px;
+display:flex;justify-content:space-between;align-items:center
+}
+.brand{font-weight:800}
+.nav a{margin-left:14px;text-decoration:none;color:#111;font-weight:700;font-size:14px}
+
+/* LAYOUT */
+.container{max-width:1100px;margin:auto;padding:40px 18px}
+.section{margin-bottom:56px}
+h1{font-size:44px;margin:0}
+h2{font-size:28px;margin:0 0 14px}
+p{color:var(--muted);font-size:15px;line-height:1.7}
+
+/* HERO */
+.hero{animation:fadeUp .8s ease}
+.hero p{max-width:720px;margin-top:10px}
+
+/* CARDS */
+.grid{
+display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:18px;margin-top:22px
+}
+.card{
+background:#fff;border-radius:22px;padding:22px;
+box-shadow:0 18px 40px rgba(0,0,0,.12);
+animation:fadeUp .9s ease
+}
+.card strong{display:block;margin-bottom:6px}
+
+/* SUPPORT */
+.support{
+background:linear-gradient(135deg,#eef2ff,#ecfeff);
+border-radius:26px;padding:28px;
+box-shadow:0 20px 45px rgba(0,0,0,.14);
+animation:fadeUp 1s ease
+}
+.support-actions{
+display:flex;gap:14px;flex-wrap:wrap;margin-top:18px
+}
+.support button{
+border:none;cursor:pointer;font-weight:800;
+padding:14px 22px;border-radius:16px;color:#fff;
+background:linear-gradient(135deg,var(--blue),var(--green));
+box-shadow:0 12px 30px rgba(59,130,246,.4)
+}
+.support small{display:block;color:#475569;margin-top:10px}
+
+/* FOOTER */
+.footer{
+text-align:center;font-size:12px;color:#64748b;
+padding:28px 18px 40px
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp{
+from{opacity:0;transform:translateY(18px)}
+to{opacity:1;transform:none}
+}
+
+/* MOBILE */
+@media(max-width:700px){
+h1{font-size:34px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="brand">SpeedTools</div>
+    <div class="nav">
+      <a href="index.html">Home</a>
+      <a href="all-tools.html">All Tools</a>
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- HERO -->
+<section class="section hero">
+<h1>About SpeedTools</h1>
+<p>
+SpeedTools is a collection of free, fast, and privacy-first online tools —
+built to help people get things done without logins, ads, or tracking.
+</p>
+</section>
+
+<!-- STORY -->
+<section class="section">
+<h2>Why SpeedTools Exists</h2>
+<p>
+Hi, I’m <strong>Aryan</strong> — a college student with a deep interest in computers and the web.
+</p>
+<p>
+While working online, I noticed something frustrating:
+even simple tasks often require creating accounts, accepting tracking,
+or jumping between multiple websites.
+</p>
+<p>
+That didn’t feel right.
+So I decided to build <strong>SpeedTools</strong> —
+a place where anyone can use useful tools freely, instantly,
+and without sacrificing privacy.
+</p>
+</section>
+
+<!-- DIFFERENCE -->
+<section class="section">
+<h2>What Makes SpeedTools Different</h2>
+<div class="grid">
+  <div class="card"><strong>🚀 Instant</strong>Tools load fast and work instantly.</div>
+  <div class="card"><strong>🔒 Private</strong>All processing happens in your browser.</div>
+  <div class="card"><strong>🚫 No login</strong>No accounts, no tracking, no ads.</div>
+  <div class="card"><strong>📱 Universal</strong>Works on mobile, tablet & desktop.</div>
+</div>
+</section>
+
+<!-- TOOLS -->
+<section class="section">
+<h2>What You’ll Find Here</h2>
+<p>
+SpeedTools includes text tools, image & PDF utilities,
+video and audio tools, calculators, converters,
+and developer helpers — all designed with a clean,
+premium user experience in mind.
+</p>
+</section>
+
+<!-- SUPPORT -->
+<section class="section support">
+<h2>Support SpeedTools</h2>
+<p>
+SpeedTools will always remain <strong>free</strong>.
+You don’t need to pay to use anything — and you never will.
+</p>
+<p>
+If you choose to support the project, it helps with hosting,
+development time, and building better tools in the future.
+</p>
+<p>
+<strong>Support is optional.</strong>
+The site works exactly the same whether you support it or not.
+</p>
+
+<div class="support-actions">
+  <button onclick="location.href='support.html'">☕ Support SpeedTools</button>
+</div>
+
+<small>
+Inspired by the philosophy of tools like VLC and WinRAR —
+free to use, supported by those who choose to.
+</small>
+</section>
+
+<!-- FUTURE -->
+<section class="section">
+<h2>Looking Ahead</h2>
+<p>
+More tools, better performance, and smoother experiences are planned —
+while keeping the core promise unchanged:
+<strong>fast tools, zero friction, total privacy.</strong>
+</p>
+</section>
+
+</div>
+
+<div class="footer">
+Built independently with passion, curiosity, and a lot of late nights ☕💻
+</div>
+
+</body>
+</html>

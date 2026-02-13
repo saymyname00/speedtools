@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Image → WebP – SpeedTools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<!-- Favicon -->
+<link rel="icon" href="assets/favicon/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg">
+<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+<link rel="manifest" href="assets/favicon/site.webmanifest">
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Inter,system-ui;
+background:
+radial-gradient(circle at 15% 20%,#c7d2fe,transparent 40%),
+radial-gradient(circle at 85% 80%,#a7f3d0,transparent 45%),
+linear-gradient(135deg,#eef2ff,#f8fafc);
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#111;
+}
+
+/* HOME BUTTON */
+.home-btn{
+position:fixed;
+top:18px;
+left:18px;
+text-decoration:none;
+font-size:14px;
+font-weight:600;
+padding:8px 14px;
+border-radius:999px;
+background:rgba(255,255,255,.75);
+backdrop-filter:blur(12px);
+color:#111;
+box-shadow:0 10px 26px rgba(0,0,0,.12);
+transition:.2s;
+z-index:999;
+}
+.home-btn:hover{
+transform:translateY(-1px);
+box-shadow:0 14px 32px rgba(0,0,0,.18);
+}
+
+/* CARD */
+.card{
+width:95%;
+max-width:1100px;
+background:#fff;
+padding:26px;
+border-radius:22px;
+box-shadow:0 28px 60px rgba(0,0,0,.14);
+}
+
+.header{
+display:flex;justify-content:space-between;align-items:center;margin-bottom:8px
+}
+.header h1{font-size:30px;margin:0}
+.badge{
+font-size:12px;background:linear-gradient(135deg,#22c55e,#16a34a);
+color:#fff;padding:6px 12px;border-radius:999px
+}
+.subtitle{font-size:14px;color:#555;margin-bottom:14px}
+
+.main{
+display:grid;grid-template-columns:1.1fr 1fr;gap:18px
+}
+
+/* DROP AREA */
+.drop{
+height:260px;border-radius:18px;border:2px dashed #c7d2fe;
+background:#f8fafc;display:flex;align-items:center;justify-content:center;
+text-align:center;cursor:pointer;transition:.2s
+}
+.drop.drag{background:#eef2ff;border-color:#6366f1}
+.drop input{display:none}
+.drop p{font-size:14px;color:#555}
+.preview{
+display:none;height:260px;border-radius:18px;overflow:hidden;
+box-shadow:0 10px 26px rgba(0,0,0,.12)
+}
+.preview img{width:100%;height:100%;object-fit:contain;background:#fff}
+
+/* STATS */
+.stats{
+display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px
+}
+.stat{
+background:linear-gradient(135deg,#f8fafc,#eef2ff);
+padding:14px;border-radius:16px;text-align:center;
+box-shadow:0 6px 14px rgba(0,0,0,.08);transition:.2s
+}
+.stat.bump{transform:scale(1.05);box-shadow:0 12px 26px rgba(0,0,0,.14)}
+.stat strong{display:block;font-size:20px}
+
+/* QUALITY */
+.quality-box{
+background:#f7f8fa;
+padding:14px;
+border-radius:16px;
+margin-bottom:12px;
+}
+.quality-box label{
+font-size:13px;color:#555;display:flex;justify-content:space-between
+}
+input[type=range]{width:100%}
+
+/* ACTIONS */
+.actions{display:flex;gap:12px}
+button{
+flex:1;padding:12px;border-radius:12px;border:none;
+font-size:14px;font-family:Inter;cursor:pointer;transition:.15s
+}
+button:disabled{opacity:.6;cursor:not-allowed}
+button:active{transform:scale(.96)}
+.convert{
+background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;
+box-shadow:0 10px 26px rgba(99,102,241,.35)
+}
+.download{background:#e5e7eb}
+
+.footer{
+margin-top:12px;text-align:center;font-size:12px;color:#666
+}
+
+/* MOBILE */
+@media(max-width:900px){
+.main{grid-template-columns:1fr}
+.drop,.preview{height:200px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME BUTTON -->
+<a href="index.html" class="home-btn">← Home</a>
+
+<div class="card">
+<div class="header">
+<h1>Image → WebP</h1>
+<div class="badge">100% Browser Based</div>
+</div>
+<p class="subtitle">Convert images to WebP instantly. No upload. No login.</p>
+
+<div class="main">
+
+<label class="drop" id="drop">
+<input type="file" id="file" accept="image/*">
+<p>Drag & drop an image<br>or click to select</p>
+</label>
+
+<div class="preview" id="preview">
+<img id="imgPreview">
+</div>
+
+<div>
+<div class="stats">
+<div class="stat"><strong id="origSize">—</strong>Original (KB)</div>
+<div class="stat"><strong id="webpSize">—</strong>WebP (KB)</div>
+<div class="stat"><strong id="saved">—</strong>Saved (%)</div>
+<div class="stat"><strong id="qualityLabel">80</strong>Quality</div>
+</div>
+
+<div class="quality-box">
+<label>
+<span>WebP Quality</span>
+<span id="qValue">80%</span>
+</label>
+<input type="range" id="quality" min="40" max="100" value="80">
+</div>
+
+<div class="actions">
+<button class="convert" id="convert" disabled>Convert</button>
+<button class="download" id="download" disabled>Download</button>
+</div>
+</div>
+
+</div>
+
+<div class="footer">⚡ Fast • 🔒 Private • 🚫 No uploads • Runs in your browser</div>
+</div>
+
+<script>
+const fileInput=document.getElementById('file');
+const drop=document.getElementById('drop');
+const preview=document.getElementById('preview');
+const imgPreview=document.getElementById('imgPreview');
+const convertBtn=document.getElementById('convert');
+const downloadBtn=document.getElementById('download');
+const quality=document.getElementById('quality');
+const qValue=document.getElementById('qValue');
+
+const origSizeEl=document.getElementById('origSize');
+const webpSizeEl=document.getElementById('webpSize');
+const savedEl=document.getElementById('saved');
+const qualityLabel=document.getElementById('qualityLabel');
+
+let image=null, webpBlob=null;
+
+function bump(el){
+el.classList.remove('bump'); void el.offsetWidth;
+el.classList.add('bump'); setTimeout(()=>el.classList.remove('bump'),180);
+}
+
+quality.addEventListener('input',()=>{
+qValue.textContent=quality.value+"%";
+qualityLabel.textContent=quality.value;
+});
+
+['dragenter','dragover'].forEach(e=>drop.addEventListener(e,ev=>{
+ev.preventDefault(); drop.classList.add('drag');
+}));
+['dragleave','drop'].forEach(e=>drop.addEventListener(e,ev=>{
+ev.preventDefault(); drop.classList.remove('drag');
+}));
+
+drop.addEventListener('drop',e=>{
+fileInput.files=e.dataTransfer.files;
+handleFile();
+});
+fileInput.addEventListener('change',handleFile);
+
+function handleFile(){
+const f=fileInput.files[0];
+if(!f) return;
+image=f;
+origSizeEl.textContent=(f.size/1024).toFixed(1); bump(origSizeEl.parentElement);
+imgPreview.src=URL.createObjectURL(f);
+preview.style.display='block';
+drop.style.display='none';
+convertBtn.disabled=false;
+}
+
+convertBtn.addEventListener('click',()=>{
+const img=new Image();
+img.onload=()=>{
+const c=document.createElement('canvas');
+c.width=img.width; c.height=img.height;
+c.getContext('2d').drawImage(img,0,0);
+c.toBlob(b=>{
+webpBlob=b;
+const kb=(b.size/1024).toFixed(1);
+webpSizeEl.textContent=kb; bump(webpSizeEl.parentElement);
+const saved=((1-b.size/image.size)*100).toFixed(1);
+savedEl.textContent=saved; bump(savedEl.parentElement);
+downloadBtn.disabled=false;
+},'image/webp',quality.value/100);
+};
+img.src=URL.createObjectURL(image);
+});
+
+downloadBtn.addEventListener('click',()=>{
+const a=document.createElement('a');
+a.href=URL.createObjectURL(webpBlob);
+a.download=image.name.replace(/\.\w+$/,'')+'.webp';
+a.click();
+});
+</script>
+
+</body>
+</html>

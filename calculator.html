@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Calculator – SpeedTools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;800&display=swap" rel="stylesheet">
+
+<!-- Favicon -->
+<link rel="icon" href="assets/favicon/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg">
+<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+<link rel="manifest" href="assets/favicon/site.webmanifest">
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Manrope,system-ui;
+min-height:100vh;
+background:
+radial-gradient(circle at 20% 20%,#fde68a,transparent 40%),
+radial-gradient(circle at 80% 80%,#bfdbfe,transparent 45%),
+linear-gradient(135deg,#fdf4ff,#ecfeff);
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* HOME */
+.home-btn{
+position:fixed;
+top:16px;left:16px;
+padding:8px 14px;
+border-radius:999px;
+background:#fff;
+text-decoration:none;
+color:#111;
+font-weight:700;
+font-size:13px;
+box-shadow:0 10px 26px rgba(0,0,0,.12);
+}
+
+/* CARD */
+.card{
+width:820px;
+max-width:95%;
+max-height:90vh;
+background:linear-gradient(135deg,#ffffff,#f8fafc);
+border-radius:30px;
+padding:28px;
+box-shadow:0 30px 70px rgba(0,0,0,.18);
+overflow-y:auto; /* 👈 allow scroll */
+}
+
+/* HEADER */
+.header h1{
+margin:0;
+font-size:28px;
+}
+.meta{
+margin-top:6px;
+font-size:13px;
+color:#555;
+}
+
+/* DISPLAY (AUTO GROW) */
+.display{
+margin-top:20px;
+min-height:90px;
+padding:16px 22px;
+border-radius:22px;
+background:linear-gradient(135deg,#7c3aed,#22c55e);
+display:flex;
+align-items:flex-end;
+justify-content:flex-end;
+overflow-wrap:anywhere;   /* 👈 allow wrap */
+word-break:break-all;
+}
+.display span{
+font-size:34px;
+font-weight:800;
+color:#fff;
+line-height:1.3;
+text-align:right;
+}
+
+/* KEYS */
+.keys{
+margin-top:24px;
+display:grid;
+grid-template-columns:repeat(4,1fr);
+grid-auto-rows:64px;
+gap:16px;
+}
+
+button{
+border:none;
+border-radius:20px;
+font-size:18px;
+font-weight:800;
+cursor:pointer;
+transition:.12s;
+}
+button:active{transform:scale(.94)}
+
+.num{background:#f1f5f9}
+.op{
+background:linear-gradient(135deg,#6366f1,#22d3ee);
+color:#fff;
+}
+.eq{
+grid-column:span 2;
+background:linear-gradient(135deg,#22c55e,#4ade80);
+color:#064e3b;
+}
+.clear{
+background:linear-gradient(135deg,#fb7185,#ef4444);
+color:#fff;
+}
+.del{
+background:linear-gradient(135deg,#fde68a,#facc15);
+color:#92400e;
+}
+
+/* FOOTER */
+.footer{
+margin-top:16px;
+font-size:12px;
+color:#666;
+text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<a href="index.html" class="home-btn">← Home</a>
+
+<div class="card">
+
+<div class="header">
+  <h1>Calculator</h1>
+  <div class="meta">Fast • Browser-based • No login • Privacy-first</div>
+</div>
+
+<div class="display">
+  <span id="display">0</span>
+</div>
+
+<div class="keys">
+  <button class="clear" onclick="clearAll()">AC</button>
+  <button class="del" onclick="backspace()">DEL</button>
+  <button class="op" onclick="press('%')">%</button>
+  <button class="op" onclick="press('/')">÷</button>
+
+  <button class="num" onclick="press('7')">7</button>
+  <button class="num" onclick="press('8')">8</button>
+  <button class="num" onclick="press('9')">9</button>
+  <button class="op" onclick="press('*')">×</button>
+
+  <button class="num" onclick="press('4')">4</button>
+  <button class="num" onclick="press('5')">5</button>
+  <button class="num" onclick="press('6')">6</button>
+  <button class="op" onclick="press('-')">−</button>
+
+  <button class="num" onclick="press('1')">1</button>
+  <button class="num" onclick="press('2')">2</button>
+  <button class="num" onclick="press('3')">3</button>
+  <button class="op" onclick="press('+')">+</button>
+
+  <button class="num" onclick="press('0')">0</button>
+  <button class="num" onclick="press('.')">.</button>
+  <button class="eq" onclick="calculate()">=</button>
+</div>
+
+<div class="footer">
+⌨ Keyboard supported • Stable • Real calculator behaviour
+</div>
+
+</div>
+
+<script>
+const display=document.getElementById("display");
+let value="0";
+
+function press(v){
+if(value==="0") value="";
+value+=v;
+display.textContent=value;
+}
+
+function calculate(){
+try{
+value=String(eval(value.replace('%','/100')));
+}catch{
+value="Error";
+}
+display.textContent=value;
+}
+
+function clearAll(){
+value="0";
+display.textContent=value;
+}
+
+function backspace(){
+value=value.slice(0,-1)||"0";
+display.textContent=value;
+}
+
+/* KEYBOARD */
+document.addEventListener("keydown",e=>{
+if("0123456789.+-*/%".includes(e.key)) press(e.key);
+if(e.key==="Enter") calculate();
+if(e.key==="Backspace") backspace();
+if(e.key==="Escape") clearAll();
+});
+</script>
+
+</body>
+</html>
