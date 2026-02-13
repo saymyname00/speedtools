@@ -1,0 +1,46 @@
+<script>
+async function lockPDF() {
+  const fileInput = document.getElementById("pdfInput");
+  const password = document.getElementById("password").value;
+
+  if (!fileInput.files.length) {
+    alert("Select a PDF");
+    return;
+  }
+  if (password.length < 4) {
+    alert("Password too short");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const buffer = await file.arrayBuffer();
+  const base64 = btoa(
+    String.fromCharCode(...new Uint8Array(buffer))
+  );
+
+  const res = await fetch("/.netlify/functions/lock-pdf", {
+    method: "POST",
+    body: JSON.stringify({
+      pdfBase64: base64,
+      password: password,
+      filename: file.name
+    })
+  });
+
+  if (!res.ok) {
+    alert("Lock failed");
+    return;
+  }
+
+  const data = await res.json();
+  const blob = new Blob(
+    [Uint8Array.from(atob(data.lockedPdf), c => c.charCodeAt(0))],
+    { type: "application/pdf" }
+  );
+
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = data.outputName;
+  a.click();
+}
+</script>

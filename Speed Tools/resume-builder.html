@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resume Maker – SpeedTools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<!-- Favicon -->
+<link rel="icon" href="assets/favicon/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg">
+<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+<link rel="manifest" href="assets/favicon/site.webmanifest">
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Inter,system-ui;
+background:
+radial-gradient(circle at 20% 20%,#dbeafe,transparent 40%),
+radial-gradient(circle at 80% 80%,#dcfce7,transparent 45%),
+linear-gradient(135deg,#f8fafc,#ecfeff);
+min-height:100vh;
+color:#111;
+}
+
+/* HOME */
+.home-btn{
+position:fixed;
+top:18px;left:18px;
+padding:8px 14px;
+border-radius:999px;
+background:#fff;
+text-decoration:none;
+color:#111;
+font-weight:600;
+box-shadow:0 10px 26px rgba(0,0,0,.12);
+z-index:999;
+}
+
+/* APP */
+.app{
+width:95%;
+max-width:1300px;
+margin:30px auto;
+display:grid;
+grid-template-columns:420px 1fr;
+gap:20px;
+}
+
+/* PANEL */
+.panel{
+background:#fff;
+padding:20px;
+border-radius:20px;
+box-shadow:0 20px 50px rgba(0,0,0,.15);
+}
+
+/* FORM */
+label{font-size:13px;color:#555}
+input,textarea,select{
+width:100%;
+padding:12px;
+border-radius:12px;
+border:1px solid #ddd;
+margin-bottom:10px;
+font-family:Inter;
+font-size:14px;
+background:#f9fafb;
+outline:none;
+}
+textarea{resize:none;min-height:70px}
+input:focus,textarea:focus,select:focus{
+border-color:var(--accent,#2563eb);
+box-shadow:0 0 0 3px rgba(37,99,235,.15);
+background:#fff;
+}
+
+/* CONTROLS */
+.controls{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-bottom:12px;
+}
+
+/* BUTTONS */
+.actions{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+button{
+flex:1;
+padding:12px;
+border:none;
+border-radius:14px;
+font-size:14px;
+cursor:pointer;
+}
+.download{
+background:linear-gradient(135deg,#22c55e,#4ade80);
+color:#052e16;
+}
+.clear{background:#e5e7eb}
+
+/* PREVIEW */
+.preview-wrap{
+display:flex;
+justify-content:center;
+align-items:flex-start;
+}
+
+/* A4 PAGE */
+.page{
+width:794px;
+min-height:1123px;
+background:#fff;
+padding:40px 50px;
+box-shadow:0 25px 60px rgba(0,0,0,.2);
+font-family:var(--font,Inter);
+--accent:#2563eb;
+word-wrap:break-word;
+overflow-wrap:break-word;
+}
+
+/* RESUME */
+.page h1{
+margin:0;
+font-size:32px;
+color:var(--accent);
+}
+.page .title{
+font-size:15px;
+margin:6px 0 14px;
+}
+.page .contact{
+font-size:13px;
+margin-bottom:18px;
+}
+
+.section{margin-bottom:16px}
+.section h3{
+margin:0 0 6px;
+font-size:16px;
+color:var(--accent);
+border-bottom:1px solid #ddd;
+padding-bottom:4px;
+}
+.section p, .section li{
+font-size:14px;
+line-height:1.6;
+margin:0 0 6px;
+}
+.section ul{padding-left:18px;margin:0}
+
+/* TEMPLATE */
+.modern h1{text-transform:uppercase}
+.modern .section h3{letter-spacing:1px}
+
+/* MOBILE */
+@media(max-width:1100px){
+.app{grid-template-columns:1fr}
+.preview-wrap{overflow:auto}
+}
+</style>
+</head>
+
+<body>
+
+<a href="index.html" class="home-btn">← Home</a>
+
+<div class="app">
+
+<!-- FORM -->
+<div class="panel">
+
+<div class="controls">
+<select onchange="setFont(this.value)">
+<option value="Inter">Inter</option>
+<option value="Arial">Arial</option>
+<option value="Georgia">Georgia</option>
+</select>
+
+<input type="color" value="#2563eb" onchange="setColor(this.value)">
+</div>
+
+<select onchange="setTemplate(this.value)">
+<option value="">Classic Template</option>
+<option value="modern">Modern Template</option>
+</select>
+
+<label>Full Name</label>
+<input oninput="set('name',this.value)">
+
+<label>Job Title</label>
+<input oninput="set('title',this.value)">
+
+<label>Contact</label>
+<input oninput="set('contact',this.value)" placeholder="Email | Phone | Location">
+
+<label>Summary</label>
+<textarea oninput="set('summary',this.value)"></textarea>
+
+<label>Skills (comma separated)</label>
+<textarea oninput="setSkills(this.value)"></textarea>
+
+<label>Experience</label>
+<textarea oninput="set('experience',this.value)"></textarea>
+
+<label>Education</label>
+<textarea oninput="set('education',this.value)"></textarea>
+
+<div class="actions">
+<button class="download" onclick="downloadPDF()">Download PDF</button>
+<button class="clear" onclick="location.reload()">Clear</button>
+</div>
+
+</div>
+
+<!-- PREVIEW -->
+<div class="preview-wrap">
+<div class="page" id="resume">
+
+<h1 id="name">Your Name</h1>
+<div class="title" id="title">Job Title</div>
+<div class="contact" id="contact">email@example.com | +91 XXXXX XXXXX</div>
+
+<div class="section">
+<h3>Summary</h3>
+<p id="summary">Short professional summary goes here.</p>
+</div>
+
+<div class="section">
+<h3>Skills</h3>
+<ul id="skills"><li>—</li></ul>
+</div>
+
+<div class="section">
+<h3>Experience</h3>
+<p id="experience">Your experience details.</p>
+</div>
+
+<div class="section">
+<h3>Education</h3>
+<p id="education">Your education details.</p>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script>
+function set(id,val){
+document.getElementById(id).textContent=val||"—";
+}
+
+function setSkills(v){
+const ul=document.getElementById("skills");
+ul.innerHTML="";
+if(!v){ul.innerHTML="<li>—</li>";return;}
+v.split(",").forEach(s=>{
+const li=document.createElement("li");
+li.textContent=s.trim();
+ul.appendChild(li);
+});
+}
+
+function setFont(f){
+document.getElementById("resume").style.fontFamily=f;
+}
+
+function setColor(c){
+document.getElementById("resume").style.setProperty("--accent",c);
+}
+
+function setTemplate(t){
+document.getElementById("resume").className="page "+t;
+}
+
+function downloadPDF(){
+html2pdf()
+.set({
+margin:0,
+filename:'resume.pdf',
+image:{type:'jpeg',quality:0.98},
+html2canvas:{scale:2},
+jsPDF:{unit:'px',format:[794,1123],orientation:'portrait'}
+})
+.from(document.getElementById("resume"))
+.save();
+}
+</script>
+
+</body>
+</html>

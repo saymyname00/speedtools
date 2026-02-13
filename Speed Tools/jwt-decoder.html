@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JWT Decoder – SpeedTools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+<!-- Favicon -->
+<link rel="icon" href="assets/favicon/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg">
+<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+<link rel="manifest" href="assets/favicon/site.webmanifest">
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Inter,system-ui;
+background:
+radial-gradient(circle at 18% 22%,#c7d2fe,transparent 40%),
+radial-gradient(circle at 82% 78%,#a7f3d0,transparent 45%),
+linear-gradient(135deg,#eef2ff,#ecfeff);
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#111;
+}
+
+/* HOME */
+.home-btn{
+position:fixed;top:18px;left:18px;
+text-decoration:none;font-size:14px;font-weight:600;
+padding:8px 14px;border-radius:999px;
+background:rgba(255,255,255,.9);
+backdrop-filter:blur(10px);
+color:#111;
+box-shadow:0 10px 26px rgba(0,0,0,.12);
+transition:.2s;z-index:999;
+}
+.home-btn:hover{transform:translateY(-1px)}
+
+/* CARD */
+.card{
+width:95%;max-width:1100px;
+background:#fff;padding:26px;
+border-radius:26px;
+box-shadow:0 28px 60px rgba(0,0,0,.15);
+}
+
+/* HEADER */
+.header{
+display:flex;justify-content:space-between;align-items:center;margin-bottom:8px
+}
+.header h1{font-size:30px;margin:0}
+.badge{
+font-size:12px;
+background:linear-gradient(135deg,#6366f1,#22c55e);
+color:#fff;
+padding:6px 12px;border-radius:999px
+}
+.subtitle{font-size:14px;color:#555;margin-bottom:14px}
+
+/* INPUT */
+input{
+width:100%;
+padding:14px 16px;
+border-radius:18px;
+border:1px solid #ddd;
+font-size:14px;
+outline:none;
+font-family:Inter;
+background:#f9fafb;
+margin-bottom:14px;
+}
+input:focus{
+border-color:#6366f1;
+box-shadow:0 0 0 3px rgba(99,102,241,.15);
+background:#fff;
+}
+
+/* LAYOUT */
+.main{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+}
+
+/* BOX */
+.box{
+width:100%;
+height:220px;
+padding:18px;
+font-size:13px;
+border-radius:18px;
+border:1px solid #ddd;
+resize:none;
+outline:none;
+font-family:Inter;
+background:#f9fafb;
+white-space:pre-wrap;
+word-break:break-word;
+overflow:auto;
+}
+
+/* LABEL */
+.label{
+font-size:13px;
+font-weight:600;
+margin-bottom:6px;
+}
+
+/* STATUS */
+.status{
+margin-top:12px;
+padding:10px 14px;
+border-radius:14px;
+font-size:13px;
+display:none;
+}
+.ok{background:#dcfce7;color:#065f46}
+.err{background:#fee2e2;color:#7f1d1d}
+
+/* STATS */
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+margin-top:12px;
+}
+.stat{
+background:linear-gradient(135deg,#eef2ff,#ecfeff);
+padding:12px;
+border-radius:14px;
+text-align:center;
+font-size:13px;
+box-shadow:0 6px 14px rgba(0,0,0,.08);
+}
+.stat strong{display:block;font-size:20px}
+
+/* FOOTER */
+.footer{
+margin-top:12px;
+text-align:center;
+font-size:12px;
+color:#666
+}
+
+/* MOBILE */
+@media(max-width:900px){
+.main{grid-template-columns:1fr}
+.box{height:190px}
+}
+</style>
+</head>
+
+<body>
+
+<a href="index.html" class="home-btn">← Home</a>
+
+<div class="card">
+
+<div class="header">
+<h1>JWT Decoder</h1>
+<div class="badge">Developer Tool</div>
+</div>
+
+<p class="subtitle">
+Decode JSON Web Tokens instantly. No verification, no tracking, browser-only.
+</p>
+
+<input id="jwt" placeholder="Paste JWT token here (header.payload.signature)">
+
+<div class="main">
+  <div>
+    <div class="label">Header</div>
+    <div class="box" id="headerBox">—</div>
+  </div>
+
+  <div>
+    <div class="label">Payload</div>
+    <div class="box" id="payloadBox">—</div>
+  </div>
+</div>
+
+<div class="status" id="status"></div>
+
+<div class="stats">
+  <div class="stat"><strong id="alg">—</strong>Algorithm</div>
+  <div class="stat"><strong id="exp">—</strong>Expiry</div>
+  <div class="stat"><strong id="iss">—</strong>Issuer</div>
+</div>
+
+<div class="footer">
+🔐 Decode JWT • 🔒 Private • 🚫 No login • Browser based
+</div>
+
+</div>
+
+<script>
+const jwtInput=document.getElementById("jwt");
+const headerBox=document.getElementById("headerBox");
+const payloadBox=document.getElementById("payloadBox");
+const statusBox=document.getElementById("status");
+
+const algEl=document.getElementById("alg");
+const expEl=document.getElementById("exp");
+const issEl=document.getElementById("iss");
+
+jwtInput.addEventListener("input",decodeJWT);
+
+function decodeJWT(){
+const token=jwtInput.value.trim();
+if(!token){ reset(); return; }
+
+const parts=token.split(".");
+if(parts.length!==3){
+return showError("Invalid JWT format");
+}
+
+try{
+const header=JSON.parse(atob(parts[0].replace(/-/g,"+").replace(/_/g,"/")));
+const payload=JSON.parse(atob(parts[1].replace(/-/g,"+").replace(/_/g,"/")));
+
+headerBox.textContent=JSON.stringify(header,null,2);
+payloadBox.textContent=JSON.stringify(payload,null,2);
+
+algEl.textContent=header.alg || "—";
+issEl.textContent=payload.iss || "—";
+expEl.textContent=payload.exp
+? new Date(payload.exp*1000).toLocaleString()
+: "—";
+
+showOK("JWT decoded successfully");
+}catch(e){
+showError("Failed to decode JWT");
+}
+}
+
+function showOK(msg){
+statusBox.textContent=msg;
+statusBox.className="status ok";
+statusBox.style.display="block";
+}
+
+function showError(msg){
+statusBox.textContent=msg;
+statusBox.className="status err";
+statusBox.style.display="block";
+resetBoxes();
+}
+
+function reset(){
+statusBox.style.display="none";
+resetBoxes();
+}
+
+function resetBoxes(){
+headerBox.textContent="—";
+payloadBox.textContent="—";
+algEl.textContent=expEl.textContent=issEl.textContent="—";
+}
+</script>
+
+</body>
+</html>

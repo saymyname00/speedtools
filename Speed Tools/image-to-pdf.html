@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Image to PDF – SpeedTools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+
+<!-- Favicon -->
+<link rel="icon" href="assets/favicon/favicon.ico">
+<link rel="icon" type="image/svg+xml" href="assets/favicon/favicon.svg">
+<link rel="apple-touch-icon" href="assets/favicon/apple-touch-icon.png">
+<link rel="manifest" href="assets/favicon/site.webmanifest">
+
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;
+font-family:Inter,system-ui;
+background:
+radial-gradient(circle at 12% 18%,#86efac,transparent 42%),
+radial-gradient(circle at 88% 82%,#93c5fd,transparent 46%),
+linear-gradient(135deg,#ecfdf5,#eef2ff);
+min-height:100vh;
+display:flex;
+justify-content:center;
+color:#111;
+}
+
+/* HOME */
+.home-btn{
+position:fixed;top:18px;left:18px;
+padding:10px 16px;border-radius:999px;
+background:#fff;text-decoration:none;color:#111;
+font-weight:600;box-shadow:0 10px 26px rgba(0,0,0,.12);
+z-index:999;
+}
+
+/* CARD */
+.card{
+margin:90px auto 50px;
+width:95%;max-width:900px;
+background:#fff;
+padding:56px 50px 58px;
+border-radius:36px;
+box-shadow:0 38px 90px rgba(0,0,0,.18);
+text-align:center;
+}
+
+h1{margin:0;font-size:34px}
+
+.subtitle{
+margin:18px 0 44px;
+font-size:15px;color:#555;line-height:1.8;
+}
+
+/* UPLOAD */
+.upload{
+position:relative;
+margin:0 auto 36px;
+max-width:520px;
+height:92px;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+border:2px dashed #22c55e;
+border-radius:16px;
+background:#f0fdf4;
+font-size:16px;
+font-weight:600;
+color:#065f46;
+cursor:pointer;
+}
+.upload:hover{background:#dcfce7}
+.upload input{
+position:absolute;
+inset:0;
+opacity:0;
+cursor:pointer;
+}
+
+/* IMAGE LIST */
+.images{
+max-width:780px;
+margin:26px auto 0;
+display:flex;
+gap:16px;
+overflow-x:auto;
+padding-bottom:6px;
+}
+.images::-webkit-scrollbar{height:6px}
+.images::-webkit-scrollbar-thumb{
+background:#a7f3d0;border-radius:10px;
+}
+
+.image{
+min-width:150px;
+background:#f8fafc;
+border-radius:16px;
+padding:10px;
+text-align:center;
+font-size:12px;
+box-shadow:0 6px 14px rgba(0,0,0,.08);
+}
+.image img{
+width:100%;
+height:120px;
+object-fit:cover;
+border-radius:12px;
+margin-bottom:8px;
+}
+.controls{
+display:flex;
+justify-content:center;
+gap:6px;
+}
+.controls button{
+border:none;
+padding:6px 10px;
+font-size:12px;
+border-radius:10px;
+cursor:pointer;
+}
+.left,.right{background:#dbeafe}
+.del{background:#fee2e2;color:#991b1b}
+
+/* BUTTON */
+.main-btn{
+margin-top:52px;
+padding:16px 52px;
+border-radius:32px;
+border:none;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+background:linear-gradient(135deg,#22c55e,#16a34a);
+color:#fff;
+box-shadow:0 18px 40px rgba(34,197,94,.5);
+}
+
+/* FOOTER */
+.footer{
+margin-top:46px;
+font-size:13px;color:#666;line-height:1.6;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+.card{padding:38px 22px}
+.upload{height:82px}
+.image{min-width:130px}
+.image img{height:100px}
+}
+</style>
+</head>
+
+<body>
+
+<a href="index.html" class="home-btn">← Home</a>
+
+<div class="card">
+
+<h1>Image to PDF</h1>
+
+<p class="subtitle">
+Convert multiple images into a single PDF file.<br>
+All processing happens inside your browser.
+</p>
+
+<div class="upload">
+🖼️ Tap to select images
+<input type="file" multiple accept="image/*" id="imgInput">
+</div>
+
+<div class="images" id="imgList"></div>
+
+<button class="main-btn" onclick="createPDF()">Convert to PDF</button>
+
+<div class="footer">
+🖼️ JPG • PNG • WEBP • 🔒 Private • 🚫 No upload
+</div>
+
+</div>
+
+<script>
+const input=document.getElementById("imgInput");
+const list=document.getElementById("imgList");
+let images=[];
+
+input.addEventListener("change",()=>{
+for(const file of input.files){
+images.push(file);
+}
+input.value="";
+render();
+});
+
+function render(){
+list.innerHTML="";
+images.forEach((img,i)=>{
+const url=URL.createObjectURL(img);
+const div=document.createElement("div");
+div.className="image";
+div.innerHTML=`
+<img src="${url}">
+<div class="controls">
+<button class="left" onclick="moveLeft(${i})">←</button>
+<button class="right" onclick="moveRight(${i})">→</button>
+<button class="del" onclick="removeImg(${i})">✕</button>
+</div>
+`;
+list.appendChild(div);
+});
+}
+
+function moveLeft(i){
+if(i>0){[images[i-1],images[i]]=[images[i],images[i-1]];render();}
+}
+function moveRight(i){
+if(i<images.length-1){[images[i+1],images[i]]=[images[i],images[i+1]];render();}
+}
+function removeImg(i){
+images.splice(i,1);
+render();
+}
+
+async function createPDF(){
+if(images.length===0){
+alert("Please add at least one image");
+return;
+}
+const pdf=await PDFLib.PDFDocument.create();
+
+for(const img of images){
+const bytes=await img.arrayBuffer();
+let image;
+if(img.type.includes("png")){
+image=await pdf.embedPng(bytes);
+}else{
+image=await pdf.embedJpg(bytes);
+}
+const page=pdf.addPage([image.width,image.height]);
+page.drawImage(image,{x:0,y:0,width:image.width,height:image.height});
+}
+
+const blob=new Blob([await pdf.save()],{type:"application/pdf"});
+const url=URL.createObjectURL(blob);
+const a=document.createElement("a");
+a.href=url;
+a.download="images.pdf";
+a.click();
+URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
